@@ -61,7 +61,7 @@ mongoose
     });
   })
   .catch((err) => {
-    console.log("❌ Failed to connect to MongoDB...", err);
+    console.log("❌ MongoDB connection failed...", err);
   });
 
 // tutorial 7 done. tutorial 8 running

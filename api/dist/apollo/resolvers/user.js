@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userResolvers = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
 const OTP_1 = __importDefault(require("../../models/OTP"));
+const User_1 = __importDefault(require("../../models/User"));
 const general_1 = require("../../utils/general");
 exports.userResolvers = {
     Query: {
@@ -95,7 +96,38 @@ exports.userResolvers = {
                     }
                 });
             context.req.session = null;
-            return true;
+            return `✅ User successfully logged out!`;
+        }),
+        updateProfile: (_, { id, username, email, phone }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            if (!username && !phone && !email) {
+                throw new apollo_server_express_1.UserInputError("❌ Please update at least one of the 3 fields: username , email or phone");
+            }
+            try {
+                const existingUser = yield User_1.default.findById(id);
+                if (!existingUser)
+                    throw new Error("user not found");
+                if (existingUser.username !== username) {
+                    existingUser.username = username;
+                }
+                if (existingUser.email !== email) {
+                    existingUser.email = email;
+                }
+                if (existingUser.phone !== phone) {
+                    existingUser.phone = phone;
+                }
+                yield existingUser.save();
+                return `user ${id} updated`;
+            }
+            catch (err) {
+                let errMsg;
+                if (err.code == 11000) {
+                    errMsg = Object.keys(err.keyValue)[0] + " already exists"; // phone already exists
+                }
+                else {
+                    errMsg = err.message;
+                }
+                throw new Error(errMsg);
+            }
         }),
     },
 };

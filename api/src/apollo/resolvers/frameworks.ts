@@ -4,17 +4,17 @@ const frameworks = [
   {
     _id: Math.random().toString(),
     name: "React",
-    url: "https://reactjs.org/",
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1280px-React-icon.svg.png",
   },
   {
     _id: Math.random().toString(),
     name: "Angular",
-    url: "https://angular.io/",
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png",
   },
   {
     _id: Math.random().toString(),
     name: "Vue",
-    url: "https://vuejs.org/",
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Vue.js_Logo_2.svg/2367px-Vue.js_Logo_2.svg.png",
   },
 ];
 
