@@ -4,8 +4,20 @@ exports.UserSchema = void 0;
 const mongoose_1 = require("mongoose");
 exports.UserSchema = new mongoose_1.Schema({
     username: { type: String, required: true },
-    email: { type: String, required: false, unique: true },
-    phone: { type: String, required: false, unique: true },
+    email: {
+        type: String,
+        required: false,
+        index: true,
+        unique: true,
+        sparse: true,
+    },
+    phone: {
+        type: String,
+        required: false,
+        index: true,
+        unique: true,
+        sparse: true,
+    },
     loginStrategy: { type: String, required: true },
 }, {
     timestamps: true,

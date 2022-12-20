@@ -76,17 +76,28 @@ export const userResolvers: IResolvers = {
     },
 
     login: async (_, { otp }, context) => {
-      const foundOtp = await OTP.findOne({ otp });
-      if (!foundOtp)
-        throw new AuthenticationError("❌ Invalid or expired OTP!");
+      try {
+        const foundOtp = await OTP.findOne({ otp });
+        if (!foundOtp)
+          throw new AuthenticationError("❌ Invalid or expired OTP!");
 
-      const { user, info } = await context.authenticate("graphql-local", {
-        username: foundOtp?.user,
-        password: foundOtp?.user,
-      });
+        const { user, info } = await context.authenticate("graphql-local", {
+          username: foundOtp?.user,
+          password: foundOtp?.user,
+        });
 
-      context.login(user);
-      return { user };
+        context.login(user);
+        return { user };
+      } catch (err: any) {
+        let errMsg;
+        if (err.code == 11000) {
+          errMsg = Object.keys(err.keyValue)[0] + " already exists"; // phone already exists
+        } else {
+          errMsg = err.message;
+        }
+
+        throw new Error(errMsg);
+      }
     },
 
     logout: async (_, args, context) => {
@@ -112,7 +123,7 @@ export const userResolvers: IResolvers = {
       try {
         const existingUser = await User.findById(id);
 
-        if (!existingUser) throw new Error("user not found");
+        if (!existingUser) throw new Error("❌ User not found!");
 
         if (existingUser.username !== username) {
           existingUser.username = username;

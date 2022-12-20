@@ -23,7 +23,7 @@ exports.userSchema = (0, apollo_server_express_1.makeExecutableSchema)({
     type Mutation {
       getOtp(emailOrPhone: String!): String!
       login(otp: String!): AuthPayload
-      logout: Boolean
+      logout: String
       updateProfile(
         id: ID!
         username: String

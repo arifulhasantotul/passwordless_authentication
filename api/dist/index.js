@@ -37,6 +37,9 @@ const uuid_1 = require("uuid");
 const apollo_1 = require("./apollo");
 const initPassport_1 = __importDefault(require("./passport/initPassport"));
 dotenv.config();
+const clientUrl = process.env.NODE_ENV === "production"
+    ? process.env.CLIENT_URL
+    : "http://localhost:3000";
 (0, initPassport_1.default)();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -48,6 +51,10 @@ app.use((0, express_session_1.default)({
 }));
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
+const corsOptions = {
+    credentials: true,
+    origin: clientUrl,
+};
 // Initializing apollo server
 const apolloServer = new apollo_server_express_1.ApolloServer({
     schema: apollo_1.schemaObject,
@@ -58,7 +65,7 @@ const apolloServer = new apollo_server_express_1.ApolloServer({
         },
     },
 });
-apolloServer.applyMiddleware({ app, cors: false });
+apolloServer.applyMiddleware({ app, cors: corsOptions });
 app.get("/", (req, res) => {
     res.send("<h1>Hello World</h1>");
 });

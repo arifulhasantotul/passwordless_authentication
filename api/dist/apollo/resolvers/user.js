@@ -76,15 +76,27 @@ exports.userResolvers = {
             }
         }),
         login: (_, { otp }, context) => __awaiter(void 0, void 0, void 0, function* () {
-            const foundOtp = yield OTP_1.default.findOne({ otp });
-            if (!foundOtp)
-                throw new apollo_server_express_1.AuthenticationError("❌ Invalid or expired OTP!");
-            const { user, info } = yield context.authenticate("graphql-local", {
-                username: foundOtp === null || foundOtp === void 0 ? void 0 : foundOtp.user,
-                password: foundOtp === null || foundOtp === void 0 ? void 0 : foundOtp.user,
-            });
-            context.login(user);
-            return { user };
+            try {
+                const foundOtp = yield OTP_1.default.findOne({ otp });
+                if (!foundOtp)
+                    throw new apollo_server_express_1.AuthenticationError("❌ Invalid or expired OTP!");
+                const { user, info } = yield context.authenticate("graphql-local", {
+                    username: foundOtp === null || foundOtp === void 0 ? void 0 : foundOtp.user,
+                    password: foundOtp === null || foundOtp === void 0 ? void 0 : foundOtp.user,
+                });
+                context.login(user);
+                return { user };
+            }
+            catch (err) {
+                let errMsg;
+                if (err.code == 11000) {
+                    errMsg = Object.keys(err.keyValue)[0] + " already exists"; // phone already exists
+                }
+                else {
+                    errMsg = err.message;
+                }
+                throw new Error(errMsg);
+            }
         }),
         logout: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
             context.logout();
@@ -105,7 +117,7 @@ exports.userResolvers = {
             try {
                 const existingUser = yield User_1.default.findById(id);
                 if (!existingUser)
-                    throw new Error("user not found");
+                    throw new Error("❌ User not found!");
                 if (existingUser.username !== username) {
                     existingUser.username = username;
                 }

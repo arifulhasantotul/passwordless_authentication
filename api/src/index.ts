@@ -10,6 +10,11 @@ import { schemaObject } from "./apollo";
 import initPassport from "./passport/initPassport";
 dotenv.config();
 
+const clientUrl =
+  process.env.NODE_ENV === "production"
+    ? process.env.CLIENT_URL
+    : "http://localhost:3000";
+
 initPassport();
 const app: Express = express();
 
@@ -26,6 +31,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+const corsOptions = {
+  credentials: true,
+  origin: clientUrl,
+};
+
 // Initializing apollo server
 const apolloServer = new ApolloServer({
   schema: schemaObject,
@@ -38,7 +48,7 @@ const apolloServer = new ApolloServer({
   },
 });
 
-apolloServer.applyMiddleware({ app, cors: false });
+apolloServer.applyMiddleware({ app, cors: corsOptions });
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World</h1>");
