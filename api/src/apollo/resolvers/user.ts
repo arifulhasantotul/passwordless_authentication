@@ -40,6 +40,10 @@ export const userResolvers: IResolvers = {
           await newOtp.save();
 
           // send otp to user email by node mailer
+          // await sendOTPEmail({
+          //   otp: genOtp,
+          //   toUser: emailOrPhone as string,
+          // });
 
           return `✅ OTP sent to ${emailOrPhone}`;
         } catch (err) {

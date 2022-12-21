@@ -1,4 +1,5 @@
 import { ApolloServer } from "apollo-server-express";
+import MongoStore from "connect-mongo";
 import * as dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import session from "express-session";
@@ -25,6 +26,11 @@ app.use(
     secret: process.env.SESSION_SECRET as string,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGOS_CONNECTION_STRING as string,
+      autoRemove: "interval",
+      autoRemoveInterval: 10,
+    }),
   })
 );
 
